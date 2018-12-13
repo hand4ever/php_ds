@@ -1,10 +1,10 @@
 <?php
-
 /**
- * 节点
- * Class Node
+ * 双向节点
+ * @linkto https://www.cnblogs.com/newwy/archive/2010/10/10/1847458.html
+ * Class DulNode
  */
-class Node {
+class DulNode {
     /**
      * ElemType
      *
@@ -12,7 +12,13 @@ class Node {
      */
     public $data;
     /**
-     * @var Node
+     * 前驱节点
+     * @var DulNode
+     */
+    public $prior;
+    /**
+     * 后继节点
+     * @var DulNode
      */
     public $next;
 }
@@ -31,19 +37,24 @@ function InitList(&$L, $arr=null)
     $q = $L;
     if($arr) {
         foreach($arr as $v) {
-            $node = new Node;
+            $node = new DulNode;
             $node->data = $v;
+
             //头插法
-//            $node->next = $L->next;
-//            $L->next = $node;
+            /*
+            $node->next  = $q->next;
+            unset($q->next);
+            $node->prior = $q;
+            $q->next     = $node;
+            */
+
             //尾插法
             $node->next = null;
+            $node->prior = $q;
             $q->next = $node;
             $q = $node;
         }
     }
-    print_r($q);
-    print_r($L);
 
 }
 
@@ -142,11 +153,14 @@ function ListInsert(&$L, $i, $e)
 //        exit("not exist position {$i}");
         return -1;//不存在第 i 个位置
     }
-    $node = new Node;
+    $node = new DulNode;
     $node->data = $e;
 
-    $node->next = &$p->next;
-    $p->next = &$node;
+    $node->next = $p->next;
+    $node->prior = $p;
+    $p->next = $node;
+
+
 
     return 0;
 }
@@ -169,10 +183,17 @@ function ListDelete(&$L, $i, &$e)
     }
     if (!$p && $j > $i) {
         return -1;// i not exists
+    } else if ($p->next == null) {//删除最后一个节点
+        $e = $p->data;
+        $p->prior->next = null;
+    } else {
+        $e = $p->data;
+        $q->next = $p->next;
+        $p->next->prior = $q;
     }
 
-    $e = $p->data;
-    $q->next = $p->next;
+
+
 
     return 0;
 }
@@ -230,50 +251,15 @@ function union(&$La, $Lb)
 }
 
 $L = null;
-InitList($L);
-//ListTraverse($L);
-ListInsert($L, 0, 'a');
-ListInsert($L, 1, 'b');
-ListInsert($L, 2, 'c');
-ListInsert($L, 3, 'd');
-ListInsert($L, 4, 'e');
-ListInsert($L, 5, 'f');
+InitList($L, [1,2,3,4,5]);
 
-ListInsert($L, 2, 'CC');
-
-echo "L ListLength:", ListLength($L),PHP_EOL;
-//ListTraverse($L);
-//
-////GetElem($L, 3, $e);
-//GetElem($L, 5, $e);
-//echo "GetElem 3:", $e;
-//
-//echo PHP_EOL,'e position is:', LocateElem($L, 'e');
-
-//ListDelete($L, 2, $f);
-//echo PHP_EOL, 'delete pos 2:', $f,PHP_EOL;
+ListInsert($L, 3, 30);
 ListTraverse($L);
-//ClearList($L);
-
-
-$Lb = null;
-InitList($Lb);
-ListInsert($Lb, 0, 'a');
-ListInsert($Lb, 1, 'b');
-ListInsert($Lb, 2, 'c3');
-ListInsert($Lb, 3, 'd3');
-ListInsert($Lb, 4, 'e3');
-ListInsert($Lb, 5, 'f');
-
-echo "Lb ListLength:", ListLength($Lb),PHP_EOL;
-ListTraverse($Lb);
-
-union($L, $Lb);
-echo "L ListLength:", ListLength($L),PHP_EOL;
+ListDelete($L, 2, $de);
+echo "deleteNode: ", $de, PHP_EOL;
 ListTraverse($L);
-
-
-$Lc = null;
-InitList($Lc, [1,2,3,4]);
-echo "Lc ListLength:", ListLength($L),PHP_EOL;
-ListTraverse($Lc);
+echo "Length:", ListLength($L),PHP_EOL;
+$e = 0;
+GetElem($L, 3, $e);
+echo "GetElem:", $e,PHP_EOL;
+echo "LocateElem:", LocateElem($L, 3),PHP_EOL;
