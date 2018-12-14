@@ -1,4 +1,14 @@
 <?php
+$q = new SplStack();
+$q[] = 1;
+$q[] = 2;
+
+var_dump($q);
+
+$int = new SplInt(94);
+echo $int;
+
+exit;
 $array = range(1, 100000);
 
 function dummy($array) {}
