@@ -1,4 +1,25 @@
 <?php
+
+class A{
+
+}
+$c = new A;
+echo gettype($c),PHP_EOL;
+$d = &$c;
+echo gettype($c),PHP_EOL;
+
+
+exit;
+$i = 3;
+debug_zval_dump($i);
+$j = $i;
+xdebug_debug_zval('i');
+$j++;
+xdebug_debug_zval('i');
+
+
+
+exit;
 $q = new SplStack();
 $q[] = 1;
 $q[] = 2;
