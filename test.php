@@ -1,98 +1,43 @@
 <?php
-
-class A{
-
-}
-$c = new A;
-echo gettype($c),PHP_EOL;
-$d = &$c;
-echo gettype($c),PHP_EOL;
-
-
-exit;
-$i = 3;
-debug_zval_dump($i);
-$j = $i;
-xdebug_debug_zval('i');
-$j++;
-xdebug_debug_zval('i');
-
-
-
-exit;
-$q = new SplStack();
-$q[] = 1;
-$q[] = 2;
-
-var_dump($q);
-
-$int = new SplInt(94);
-echo $int;
-
-exit;
-$array = range(1, 100000);
-
-function dummy($array) {}
-
-$i = 0;
-$start = microtime(true);
-while($i++ < 100) {
-    dummy($array);
-}
-
-printf("Used %sS\n", microtime(true) - $start);
-
-$b = &$array; //注意这里, 假设我不小心把这个Array引用给了一个变量
-$i = 0;
-$start = microtime(true);
-while($i++ < 100) {
-    dummy($array);
-}
-printf("Used %ss\n", microtime(true) - $start);
-exit;
-/*$bar = 1;
-$baz = 2;
-function foo($var)
-{
-	$var = 3;
-	echo $GLOBALS["baz"],PHP_EOL;
-	$var = $GLOBALS["baz"];
-}
-foo($bar);
-var_dump($bar);
-__halt_compiler();
-exit;
-*/
 class A {
-	public $foo = 1;
+	public $diffKeys = [];
+	/**
+	 * 测试
+	 *
+	 * @return void
+	 */
+	public function tt(){
+		$infoArr = [
+			['os_config_id'=>1, 'game_id'=>2, 'active_num'=>3, 'receive'=>4, 'osdk_game_id'=>5],
+			['os_config_id'=>11, 'game_id'=>21, 'active_num'=>31, 'receive'=>41, 'osdk_game_id'=>51],
+			['os_config_id'=>12, 'game_id'=>22, 'active_num'=>32, 'receive'=>42, 'osdk_game_id'=>52],
+			];
+		$checkKeys = ['os_config_id', 'game_id', 'active_num', 'receive', 'osdk_game_id'];
+		foreach($infoArr as $info) {
+			if ($this->isNotExistsKeys($checkKeys, $info)) {
+				echo "这些key不存在:" . json_encode($this->diffKeys) . PHP_EOL;
+				continue;
+			}
+			// if( !array_key_exists('os_config_id' , $info) || !array_key_exists('game_id' , $info) || !array_key_exists('active_num' , $info) || !array_key_exists('receive' , $info) || !array_key_exists('osdk_game_id' , $info) ){
+			// 	echo "not exists some keys", PHP_EOL;
+			// 	exit;
+			// }
+		}
+	}
+
+	/**
+	 * 判断key是否存在，并将不存在的key返回到类diffKeys上
+	 *
+	 * @param array $keys
+	 * @param array $arr
+	 * @return boolean
+	 */
+	public function isNotExistsKeys(array $keys, array $arr)
+	{
+		$this->diffKeys = array_keys(array_diff_key(array_flip($keys), $arr));
+		return !empty($this->diffKeys);
+	}
+
 }
 $a = new A;
-$b = $a;
-xdebug_debug_zval('a');
-xdebug_debug_zval('b');
-$b->foo = 2;
-unset($b);
-xdebug_debug_zval('a');
-//xdebug_debug_zval('b');
-echo $a->foo, PHP_EOL;
-
-$c = new A;
-echo gettype($c);
-$d = &$c;
-echo gettype($c);
-xdebug_debug_zval('c');
-xdebug_debug_zval('d');
-$d->foo = 2;
-unset($d);
-xdebug_debug_zval('c');
-
-echo $c->foo,PHP_EOL;
-
-$e = new A;
-
-function foo($obj) {
-	$obj->foo = 2;
-}
-foo($e);
-
-echo $e->foo, PHP_EOL;
+$a->tt();
